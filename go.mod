@@ -1,4 +1,4 @@
-module Gorra
+module github.com/OuterCyrex/Gorra
 
 go 1.23.4
 
