@@ -1,7 +1,7 @@
 # Gorra - Golang 微服务脚手架
 
 [![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
-![Stargazers](https://github.com/OuterCyrex/Gorra/stargazers)
+[![Stars](https://img.shields.io/badge/github-stars-blue)](https://github.com/OuterCyrex/Gorra/stargazers)
 
 **Gorra** 是一个基于 Golang 的微服务脚手架，旨在简化微服务的开发流程。通过集成 Consul 和 Nacos，它提供了便捷的服务注册、配置管理以及健康检查功能。开发者可以通过简单的配置和代码，快速搭建高性能、可扩展的微服务架构。
 
@@ -34,11 +34,30 @@ dataId: 'user_srv'
 group: 'Debug'
 ```
 
+Nacos 中的配置文件应当按如下字段进行配置：
+
+```json
+{
+  "name": "user_srv",
+  "addr":"127.0.0.1",
+  "tags": ["user", "grpc", "service"],
+  "mysql": {
+    "host": "127.0.0.1",
+    "port": 3306,
+    "username": "your_username",
+    "password": "your_password",
+    "db": "your_db"
+  },
+  "consul": {
+    "host": "127.0.0.1",
+    "port": 8500
+  }
+}
+```
+
 ### 2. 初始化服务
 
 在你的项目中，使用 `Gorra` 初始化服务并启动：
-
-go复制
 
 ```go
 package main
@@ -70,19 +89,15 @@ func main() {
 
 ## 文档
 
-- **配置文件说明**：`config.yaml` 文件用于配置服务的基本信息和注册中心的连接信息。更多字段说明请参考 [配置文档](https://kimi.moonshot.cn/chat/docs/config.md)。
-- **服务注册**：支持 Consul 和 Nacos，通过配置文件指定注册中心类型。
+- **配置文件说明**：`config.yaml` 文件用于配置服务的基本信息。
+- **服务注册**：目前仅支持 Consul 服务注册。
 - **健康检查**：内置健康检查机制，确保服务的高可用性。
 - **优雅关闭**：支持服务的优雅关闭，确保资源正确释放。
 
 ## 示例项目
 
-- [用户服务示例](https://kimi.moonshot.cn/chat/examples/user_srv)：一个完整的用户服务示例，展示如何使用 Gorra 构建微服务。
-
-## 贡献
-
-欢迎提交 PR 或报告问题！更多详情请参考 [贡献指南](https://kimi.moonshot.cn/chat/CONTRIBUTING.md)。
+- 代办
 
 ## 许可
 
-Gorra 采用 [MIT 许可证](https://kimi.moonshot.cn/chat/LICENSE)。
+Gorra 采用 [MIT 许可证](https://opensource.org/licenses/MIT)。

@@ -1,9 +1,9 @@
 # Gorra - Golang Microservice Scaffold
 
-- [中文](README_zh.md)
+- [中文文档](README_zh.md)
 
 [![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
-![Stargazers](https://github.com/OuterCyrex/Gorra/stargazers)
+[![Stars](https://img.shields.io/badge/github-stars-blue)](https://github.com/OuterCyrex/Gorra/stargazers)
 
 **Gorra** is a Golang microservice scaffold designed to simplify the development process of microservices. By integrating Consul and Nacos, it provides convenient service registration, configuration management, and health check capabilities. Developers can quickly build high-performance, scalable microservice architectures with simple configurations and code.
 
@@ -27,8 +27,6 @@ go get github.com/OuterCyrex/Gorra
 
 Create a `config.yaml` file to configure the service details and registry connection. For example:
 
-yaml复制
-
 ```yaml
 # config.yaml
 host: '127.0.0.1'
@@ -38,11 +36,30 @@ dataId: 'user_srv'
 group: 'Debug'
 ```
 
+The configuration file in Nacos should be configured according to the following fields:
+
+```json
+{
+  "name": "user_srv",
+  "addr":"127.0.0.1",
+  "tags": ["user", "grpc", "service"],
+  "mysql": {
+    "host": "127.0.0.1",
+    "port": 3306,
+    "username": "your_username",
+    "password": "your_password",
+    "db": "your_db"
+  },
+  "consul": {
+    "host": "127.0.0.1",
+    "port": 8500
+  }
+}
+```
+
 ### 2. Initialize the Service
 
 In your project, initialize and start the service using `Gorra`:
-
-go复制
 
 ```go
 package main
@@ -74,19 +91,15 @@ func main() {
 
 ## Documentation
 
-- **Configuration File**: The `config.yaml` file is used to configure service details and registry connections. For more details, see the [Configuration Documentation](https://kimi.moonshot.cn/chat/docs/config.md).
-- **Service Registration**: Supports Consul and Nacos, specified via the configuration file.
+- **Configuration File**: The `config.yaml` file is used to configure service details.
+- **Service Registration**: Now supports Consul as the services registery center.
 - **Health Check**: Built-in health check mechanism to ensure high availability.
 - **Graceful Shutdown**: Supports graceful shutdown to ensure proper resource release.
 
 ## Example Projects
 
-- [User Service Example](https://kimi.moonshot.cn/chat/examples/user_srv): A complete example of a user service demonstrating how to build a microservice with Gorra.
-
-## Contributing
-
-PRs and issue reports are welcome! For more details, see the [Contributing Guide](https://kimi.moonshot.cn/chat/CONTRIBUTING.md).
+- TODO
 
 ## License
 
-Gorra is licensed under the [MIT License](https://kimi.moonshot.cn/chat/LICENSE).
+Gorra is licensed under the [MIT License](https://opensource.org/licenses/MIT).
