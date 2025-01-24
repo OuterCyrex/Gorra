@@ -1,6 +1,7 @@
 # Gorra - Golang 微服务脚手架
 
-https://golang.org/ [LICENSE](https://kimi.moonshot.cn/chat/LICENSE) https://github.com/OuterCyrex/Gorra/stargazers
+[![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+![Stargazers](https://github.com/OuterCyrex/Gorra/stargazers)
 
 **Gorra** 是一个基于 Golang 的微服务脚手架，旨在简化微服务的开发流程。通过集成 Consul 和 Nacos，它提供了便捷的服务注册、配置管理以及健康检查功能。开发者可以通过简单的配置和代码，快速搭建高性能、可扩展的微服务架构。
 

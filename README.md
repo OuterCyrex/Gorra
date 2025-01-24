@@ -2,7 +2,8 @@
 
 - [中文](README_zh.md)
 
-https://golang.org/ [LICENSE](https://kimi.moonshot.cn/chat/LICENSE) https://github.com/OuterCyrex/Gorra/stargazers
+[![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+![Stargazers](https://github.com/OuterCyrex/Gorra/stargazers)
 
 **Gorra** is a Golang microservice scaffold designed to simplify the development process of microservices. By integrating Consul and Nacos, it provides convenient service registration, configuration management, and health check capabilities. Developers can quickly build high-performance, scalable microservice architectures with simple configurations and code.
 
