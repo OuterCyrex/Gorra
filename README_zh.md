@@ -55,7 +55,7 @@ group: 'Debug'
 }
 ```
 
-但在API网关部分，Nacos中的配置文件可以供开发者根据自身需求设置，只需要其实现`GorraAPI.BaseConfig`接口即可。
+但在API网关部分，Nacos中的配置文件可以根据开发者的自身需求设置，只需要其实现`GorraAPI.BaseConfig`接口即可。
 
 ```go
 // 实现 BaseConfig 的 GetRegistryInfo 方法
