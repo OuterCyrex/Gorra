@@ -1,4 +1,4 @@
-package Gorra
+package GorraSrv
 
 import (
 	"fmt"
@@ -38,6 +38,6 @@ func InitMysql(mysqlConfig MysqlConfig) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	fmt.Println("[Gorra] Initialize mysql database success")
+	fmt.Println("[GorraSrv] Initialize mysql database success")
 	return db, nil
 }

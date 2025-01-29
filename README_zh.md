@@ -34,7 +34,7 @@ dataId: 'user_srv'
 group: 'Debug'
 ```
 
-Nacos 中的配置文件应当按如下字段进行配置：
+在服务器端部分，即`GorraSrv`部分，Nacos 中的配置文件应当按如下字段进行配置：
 
 ```json
 {
@@ -55,9 +55,27 @@ Nacos 中的配置文件应当按如下字段进行配置：
 }
 ```
 
+但在API网关部分，Nacos中的配置文件可以供开发者根据自身需求设置，只需要其实现`GorraAPI.BaseConfig`接口即可。
+
+```go
+// 实现 BaseConfig 的 GetRegistryInfo 方法
+func (m APIConfig) GetRegistryInfo() GorraAPI.RegistryInfo {
+    return GorraAPI.RegistryInfo{
+       Name:    m.Name,
+       Address: m.Address,
+       Port:    m.Port,
+       Tags:    m.Tags,
+       Consul: GorraAPI.ConsulConfig{
+          Host: m.Consul.Host,
+          Port: m.Consul.Port,
+       },
+    }
+}
+```
+
 ### 2. 初始化服务
 
-在你的项目中，使用 `Gorra` 初始化服务并启动：
+在你的项目中，使用 `GorraSrv` 初始化服务并启动：
 
 ```go
 package main
@@ -84,6 +102,72 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+}
+```
+
+### 3.初始化API网关
+
+在初始化服务后，通过`GorraAPI`来启动API网关服务：
+
+```go
+package main
+
+import (
+    "github.com/OuterCyrex/Gorra/GorraAPI"
+)
+
+type APIConfig struct {
+    Name     string         `mapstructure:"name" json:"name"`
+    Address  string         `mapstructure:"address" json:"address"`
+    Port     int            `mapstructure:"port" json:"port"`
+    Tags     []string       `mapstructure:"tags" json:"tags"`
+    JwtKey   string         `mapstructure:"jwtKey" json:"jwtKey"`
+    Consul   ConsulConfig   `mapstructure:"consul" json:"consul"`
+    GoodsSrv GoodsSrvConfig `mapstructure:"goodsSrv" json:"goodsSrv"`
+}
+
+type ConsulConfig struct {
+    Host string `mapstructure:"host" json:"host"`
+    Port int    `mapstructure:"port" json:"port"`
+}
+
+type GoodsSrvConfig struct {
+    Name string `mapstructure:"name" json:"name"`
+}
+
+// 实现 BaseConfig 的 GetRegistryInfo 方法
+func (m APIConfig) GetRegistryInfo() GorraAPI.RegistryInfo {
+    return GorraAPI.RegistryInfo{
+       Name:    m.Name,
+       Address: m.Address,
+       Port:    m.Port,
+       Tags:    m.Tags,
+       Consul: GorraAPI.ConsulConfig{
+          Host: m.Consul.Host,
+          Port: m.Consul.Port,
+       },
+    }
+}
+
+func main() {
+    c := &APIConfig{}
+
+    // 获取Nacos配置
+    cf, err := GorraAPI.InitConfig("test/config.yaml", c)
+
+    if err != nil {
+       panic(err)
+    }
+
+    // 初始化路由
+    r := GorraAPI.KeepAliveRouters("v1")
+
+    // 启动路由服务
+    err = GorraAPI.RunRouter(r, cf)
+
+    if err != nil {
+       panic(err)
+    }
 }
 ```
 

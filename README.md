@@ -36,7 +36,7 @@ dataId: 'user_srv'
 group: 'Debug'
 ```
 
-The configuration file in Nacos should be configured according to the following fields:
+In Server Part, namely `GorraSrv`, The configuration file in Nacos should be configured according to the following fields:
 
 ```json
 {
@@ -57,35 +57,119 @@ The configuration file in Nacos should be configured according to the following 
 }
 ```
 
+But In the API Gateway part, the configuration file in Nacos can be set by developers according to their own needs, as long as it implements the `GorraAPI.BaseConfig` interface.
+
+```go
+// Implement the GetRegistryInfo method of BaseConfig
+func (m APIConfig) GetRegistryInfo() GorraAPI.RegistryInfo {
+    return GorraAPI.RegistryInfo{
+        Name:    m.Name,
+        Address: m.Address,
+        Port:    m.Port,
+        Tags:    m.Tags,
+        Consul: GorraAPI.ConsulConfig{
+            Host: m.Consul.Host,
+            Port: m.Consul.Port,
+        },
+    }
+}
+```
+
 ### 2. Initialize the Service
 
-In your project, initialize and start the service using `Gorra`:
+In your project, initialize and start the service using `GorraSrv`:
 
 ```go
 package main
 
 import (
-	"github.com/OuterCyrex/Gorra"
+	"github.com/OuterCyrex/Gorra/GorraSrv"
 	proto "user_srv/proto/.UserProto"
 	"google.golang.org/grpc"
 )
 
 func main() {
-    // pull Config from Nacos and initialize it
-	serverConfig, err := Gorra.InitConfig("example_config.yaml")
+	// pull Config from Nacos and initialize it
+	serverConfig, err := GorraSrv.InitConfig("example_config.yaml")
 	if err != nil {
 		panic(err)
 	}
 
-    // register grpc server
+	// register grpc server
 	server := grpc.NewServer()
 	proto.RegisterUserServer(server, &UserServer{})
 
-    // run the server and register it in Consul
-	err = Gorra.ServerRun(server, serverConfig)
+	// run the server and register it in Consul
+	err = GorraSrv.ServerRun(server, serverConfig)
 	if err != nil {
 		panic(err)
 	}
+}
+```
+
+### 3.Initialize the API Gateway
+
+After initialize the, initialize and start the service using `GorraAPI`:
+
+```go
+package main
+
+import (
+    "github.com/OuterCyrex/Gorra/GorraAPI"
+)
+
+type APIConfig struct {
+    Name     string         `mapstructure:"name" json:"name"`
+    Address  string         `mapstructure:"address" json:"address"`
+    Port     int            `mapstructure:"port" json:"port"`
+    Tags     []string       `mapstructure:"tags" json:"tags"`
+    JwtKey   string         `mapstructure:"jwtKey" json:"jwtKey"`
+    Consul   ConsulConfig   `mapstructure:"consul" json:"consul"`
+    GoodsSrv GoodsSrvConfig `mapstructure:"goodsSrv" json:"goodsSrv"`
+}
+
+type ConsulConfig struct {
+    Host string `mapstructure:"host" json:"host"`
+    Port int    `mapstructure:"port" json:"port"`
+}
+
+type GoodsSrvConfig struct {
+    Name string `mapstructure:"name" json:"name"`
+}
+
+// Implement the GetRegistryInfo method of BaseConfig
+func (m APIConfig) GetRegistryInfo() GorraAPI.RegistryInfo {
+    return GorraAPI.RegistryInfo{
+       Name:    m.Name,
+       Address: m.Address,
+       Port:    m.Port,
+       Tags:    m.Tags,
+       Consul: GorraAPI.ConsulConfig{
+          Host: m.Consul.Host,
+          Port: m.Consul.Port,
+       },
+    }
+}
+
+func main() {
+    c := &APIConfig{}
+
+    // pull Config from Nacos
+    cf, err := GorraAPI.InitConfig("test/config.yaml", c)
+
+    if err != nil {
+       panic(err)
+    }
+
+    // initialize the Router
+    r := GorraAPI.KeepAliveRouters("v1")
+
+    // run the router serve
+    err = GorraAPI.RunRouter(r, cf)
+
+    if err != nil {
+       panic(err)
+    }
 }
 ```
 

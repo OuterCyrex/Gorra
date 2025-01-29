@@ -1,4 +1,4 @@
-package Gorra
+package GorraSrv
 
 import (
 	"fmt"
@@ -19,7 +19,7 @@ func getFreePort() (int, error) {
 		_ = l.Close()
 	}()
 
-	fmt.Println("[Gorra] Get Free Port Success")
+	fmt.Println("[GorraSrv] Get Free Port Success")
 
 	return l.Addr().(*net.TCPAddr).Port, nil
 }

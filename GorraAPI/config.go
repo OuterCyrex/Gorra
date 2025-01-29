@@ -1,16 +1,18 @@
-package Gorra
+package GorraAPI
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/nacos-group/nacos-sdk-go/v2/clients"
 	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 	"github.com/spf13/viper"
+	"reflect"
 )
 
-func InitConfig(path string) (ServerConfig, error) {
-	nacosConfig := getNacosConfig(path)
+func InitConfig(YamlPath string, configStruct BaseConfig) (BaseConfig, error) {
+	nacosConfig := getNacosConfig(YamlPath)
 	sc := []constant.ServerConfig{
 		{
 			IpAddr: nacosConfig.Host,
@@ -33,7 +35,8 @@ func InitConfig(path string) (ServerConfig, error) {
 	})
 
 	if err != nil {
-		return ServerConfig{}, err
+		msg := fmt.Sprintf("[Gorra]: Create Nacos Client Failed: %v", err)
+		return nil, errors.New(msg)
 	}
 
 	content, err := configClient.GetConfig(vo.ConfigParam{
@@ -41,36 +44,38 @@ func InitConfig(path string) (ServerConfig, error) {
 		Group:  nacosConfig.Group,
 	})
 	if err != nil {
-		return ServerConfig{}, err
+		msg := fmt.Sprintf("[Gorra]: Get Nacos JSON Failed: %v", err)
+		return nil, errors.New(msg)
 	}
 
-	serverConfig := ServerConfig{}
+	configPtr := reflect.ValueOf(configStruct)
+	if configPtr.Kind() != reflect.Ptr {
+		return nil, fmt.Errorf("configStruct must be a pointer")
+	}
+	configElem := configPtr.Elem()
 
-	err = json.Unmarshal([]byte(content), &serverConfig)
+	err = json.Unmarshal([]byte(content), configElem.Addr().Interface())
 	if err != nil {
-		return ServerConfig{}, err
+		msg := fmt.Sprintf("[Gorra]: Unmarshal Nacos JSON Failed: %v", err)
+		return nil, errors.New(msg)
 	}
 
-	fmt.Println("[Gorra] Initialize Server Config Success")
-
-	return serverConfig, nil
+	return configElem.Interface().(BaseConfig), nil
 }
 
-func getNacosConfig(path string) NacosConfig {
-	YAMLFile := path
+func getNacosConfig(YamlPath string) NacosConfig {
+	YAMLFile := YamlPath
 	v := viper.New()
 	v.SetConfigFile(YAMLFile)
 	if err := v.ReadInConfig(); err != nil {
-		panic(err)
+		panic("[Gorra]: Viper Read YAMLFile failed")
 	}
 
 	var nacos NacosConfig
 
 	if err := v.Unmarshal(&nacos); err != nil {
-		panic(err)
+		panic("[Gorra]: Viper UnMarshal YAMLFile failed")
 	}
-
-	fmt.Printf("[Gorra] Get Nacos YMAL Config Success\n")
 
 	return nacos
 }

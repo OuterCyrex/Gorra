@@ -1,4 +1,4 @@
-package Gorra
+package GorraSrv
 
 import (
 	"fmt"
@@ -26,7 +26,7 @@ func ServerRun(server *grpc.Server, serverConfig ServerConfig) error {
 		return err
 	}
 
-	fmt.Printf("\033[31m[Gorra] Server Runs On Port %d......\033[0m\n", port)
+	fmt.Printf("\033[31m[GorraSrv] Server Runs On Port %d......\033[0m\n", port)
 
 	err = server.Serve(lis)
 	if err != nil {

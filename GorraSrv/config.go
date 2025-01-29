@@ -1,4 +1,4 @@
-package Gorra
+package GorraSrv
 
 type MysqlConfig struct {
 	Host     string `json:"host" mapstructure:"host"`

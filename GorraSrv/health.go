@@ -1,4 +1,4 @@
-package Gorra
+package GorraSrv
 
 import (
 	"fmt"
@@ -49,15 +49,15 @@ func HealthCheck(serverConfig ServerConfig, grpcAddr string, checkInterval uint)
 		signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 		<-quit
 		if err = client.Agent().ServiceDeregister(serviceUUID); err != nil {
-			fmt.Printf("[Gorra] Deregister Service %s Failed: %v\n", serviceUUID, err)
+			fmt.Printf("[GorraSrv] Deregister Service %s Failed: %v\n", serviceUUID, err)
 		}
 
-		fmt.Printf("[Gorra] Deregister Service %s Success\n", serviceUUID)
+		fmt.Printf("[GorraSrv] Deregister Service %s Success\n", serviceUUID)
 
 		os.Exit(200)
 	}()
 
-	fmt.Printf("[Gorra] Service %s is up and running\n", serviceUUID)
+	fmt.Printf("[GorraSrv] Service %s is up and running\n", serviceUUID)
 
 	return nil
 }
