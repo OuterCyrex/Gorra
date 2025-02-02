@@ -12,7 +12,7 @@ import (
 )
 
 func InitMysql(mysqlConfig MysqlConfig) (*gorm.DB, error) {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&&parseTime=True&loc=Local",
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&&parseTime=True&loc=Local",
 		mysqlConfig.User,
 		mysqlConfig.Password,
 		mysqlConfig.Host,

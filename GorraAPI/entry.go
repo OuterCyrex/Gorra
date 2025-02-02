@@ -32,21 +32,17 @@ func RunRouter(router *gin.Engine, config BaseConfig) error {
 
 	fmt.Printf("\u001B[31m[GorraAPI] API Server Runs On Port %d......\u001B[0m\n", config.GetRegistryInfo().Port)
 
-	err = router.Run(fmt.Sprintf(":%d", config.GetRegistryInfo().Port))
-
-	if err != nil {
-		return err
-	}
-
 	go func() {
-		quit := make(chan os.Signal)
-		signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-		<-quit
-		err = registryClient.deRegister(registryId)
-		if err == nil {
-			fmt.Printf("[Gorra]: API Gateway Deregistry %v Success\n", registryId)
-		}
+		_ = router.Run(fmt.Sprintf(":%d", config.GetRegistryInfo().Port))
 	}()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	err = registryClient.deRegister(registryId)
+	if err == nil {
+		fmt.Printf("[Gorra]: API Gateway Deregistry %v Success\n", registryId)
+	}
 
 	return nil
 }
