@@ -34,6 +34,10 @@ func HandleGrpcErrorToHttp(err error, c *gin.Context) {
 				c.JSON(http.StatusServiceUnavailable, gin.H{
 					"msg": "无法建立rpc连接",
 				})
+			case codes.AlreadyExists:
+				c.JSON(http.StatusConflict, gin.H{
+					"msg": e.Message(),
+				})
 			default:
 				zap.S().Errorf("InternalServerError: %v", err)
 				c.JSON(http.StatusInternalServerError, gin.H{
