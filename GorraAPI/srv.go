@@ -3,7 +3,9 @@ package GorraAPI
 import (
 	"errors"
 	"fmt"
+	"github.com/OuterCyrex/Gorra/GorraAPI/middlewares"
 	_ "github.com/mbobakov/grpc-consul-resolver"
+	"github.com/opentracing/opentracing-go"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -18,6 +20,7 @@ func GetSrvConnection(wait uint, config BaseConfig, srvName string) (*grpc.Clien
 		),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingPolicy": "%s"}`, "round_robin")),
+		grpc.WithUnaryInterceptor(middlewares.GrpcTracerInterceptor(opentracing.GlobalTracer())),
 	)
 
 	if err != nil {
